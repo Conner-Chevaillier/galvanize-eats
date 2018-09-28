@@ -1,0 +1,60 @@
+.topnavbar {
+
+    border: whitesmoke 5px;
+}
+
+body {
+    padding: 10px;
+}
+
+.title {
+    text-align: center;
+
+}
+
+.top_container {
+
+    background-image: url('./media/restaurant-hero-image.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 70vh;
+
+}
+
+.Place-order {
+    display: flex;
+    position: absolute;
+    color: beige;
+    top: 50%;
+    left: 45%;
+    border: 10px grey solid;
+    width: 100px;
+    height: 60px;
+    text-align: center;
+
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    color: white;
+    background: lightslategray;
+    border: whitesmoke 5px solid;
+    align-content: space-around;
+    height: 30vh;
+}
+
+h3 {
+    flex-direction: row;
+    color: black;
+    text-align: center;
+}
+
+.col-md-4 {
+    align-content: center;
+    justify-content: center;
+    border: whitesmoke 5px solid;
+    margin: 10px;
+
+}

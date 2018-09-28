@@ -1,0 +1,60 @@
+.order-container {
+    background-image: url('./media/restaurant-hero-image.jpg');
+    background-image: no-repeat;
+    border: black solid 10px;
+    width: 100vw;
+    height: 100vh;
+
+}
+
+
+.col-md-4 {
+    display: flex;
+    border: solid black 5px;
+    color: whitesmoke;
+    float: right;
+    height: 70vh;
+    width: 30vw;
+}
+
+.col-md-8 {
+    display: flex;
+    border: solid black 5px;
+    color: whitesmoke;
+    flex-direction: column;
+    width: 65vw;
+}
+
+.menu {
+    border: 5px solid black;
+    color: whitesmoke;
+}
+
+.quantity {
+    border: 5px solid black;
+    color: whitesmoke;
+}
+
+.Name {
+    border: 5px solid black;
+    color: whitesmoke;
+}
+
+.phone {
+    border: 5px solid black;
+    color: whitesmoke;
+}
+
+.address {
+    border: 5px solid black;
+    color: whitesmoke;
+}
+
+.deliver {
+    border: 5px solid black;
+    color: whitesmoke;
+}
+
+.Grand-Total {
+    color: whitesmoke;
+}
