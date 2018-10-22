@@ -1,0 +1,147 @@
+var nav_menu = document.querySelector('#mobile-menu');
+var nav_links = document.querySelector('.main-nav .nav-links');
+var nav_modal = document.querySelector('.modal-bkgd');
+
+var food_menu = document.querySelector('.menu-lists .lists');
+var checkout_lists = document.querySelector('.checkout-lists .lists');
+var quantity = document.querySelector('#quantity');
+var add_btn = document.querySelector('#add-btn');
+
+
+
+var form_name = document.querySelector('.form #name');
+var form_phone = document.querySelector('.form #phone');
+var form_address = document.querySelector('.form #address');
+var deliver_btn = document.querySelector('.form #deliver-btn');
+
+var selectItem = null;
+var t_amt = 0;
+
+var orders = document.querySelector('#orders');
+
+// mobile nav menu
+nav_menu.addEventListener('click',function(e){
+    e.preventDefault();
+    nav_modal.classList.toggle('active');
+    nav_links.classList.toggle('active');
+})
+
+
+// Order 
+if(orders !== null){
+    function enableDisableAddBtn(){
+        if(selectItem === null || quantity.value === "" || parseInt(quantity.value) <= 0) {
+            add_btn.disabled = true;
+    or } else {
+            add_btn.removeAttribute("disabled");
+        }
+    }
+
+    function enableDisableDeliverBtn(){
+        if(form_name.value === "" || form_phone.value === "" || form_address.value === "" || checkout_lists.childElementCount === 0){
+            deliver_btn.disabled = true;
+        } else {
+            deliver_btn.removeAttribute("disabled");
+        }
+    }
+
+    fetch('https://galvanize-eats-api.herokuapp.com/menu')
+    .then(function(resolve) {
+        return resolve.json();
+    })
+    .then(function(data){
+        for(var i = 0; i<data.menu.length; i++){
+            food_menu.innerHTML += '<li data-type="'+ data.menu[i].type +'" data-name="' + data.menu[i].name + '">' + data.menu[i].name + '<span class="price">$' + data.menu[i].price + '</span></li>';
+        }
+        var food_menu_lists = document.querySelectorAll('.menu-lists .lists li');
+        function removeClasses(){
+            for(var i = 0; i<food_menu_lists.length; i++){
+                food_menu_lists[i].classList.remove('active')
+            }
+        }
+        for(var i = 0; i<food_menu_lists.length; i++){
+            food_menu_lists[i].addEventListener('click', function(e){
+                if(e.target.classList.contains('active')) {
+                    this.classList.remove('active');
+                    selectItem = null;
+                    enableDisableAddBtn();
+                } else {
+                    removeClasses();
+                    this.classList.add('active');
+                    selectItem = this;
+                    enableDisableAddBtn();
+                }
+            })
+        }
+
+        quantity.addEventListener('change', enableDisableAddBtn)
+        quantity.addEventListener('keyup', enableDisableAddBtn)
+        add_btn.addEventListener('click', function(e){
+            e.preventDefault();
+            var p = parseFloat(selectItem.childNodes[1].innerHTML.slice(1)).toFixed(2);
+            var q = quantity.value;
+            var t = p * q;
+            checkout_lists.innerHTML += '<li>' + '<a href="#" class="delete-btn">X</a>' + '<div class="name">' + selectItem.getAttribute('data-name') + ' <span class="quantity">x' + quantity.value + '</span>' + '<span class="price">' + Number(t.toFixed(2)) + '</span>' + '</div></li>';
+            t_amt += t;
+            total_price.innerHTML = "$" + t_amt.toFixed(2);
+            var checkoutLists = document.querySelectorAll('.checkout-lists .lists li');
+            for(var i = 0; i<checkoutLists.length; i++){
+                checkoutLists[i].addEventListener('click', function(e){
+                    e.preventDefault();
+                    this.remove();
+                    var removePrice = this.childNodes[1].childNodes[2].innerHTML;
+                    t_amt -= Number(removePrice);
+                    if (t_amt < 0) {
+                        t_amt = 0;
+                    }
+                    total_price.innerHTML = "$" + t_amt.toFixed(2);
+                    enableDisableDeliverBtn();
+                });
+            }
+            quantity.value = "";
+            add_btn.disabled = true;
+            enableDisableDeliverBtn();
+        })
+    })
+    form_name.addEventListener('change', enableDisableDeliverBtn);
+    form_phone.addEventListener('change', enableDisableDeliverBtn);
+    form_address.addEventListener('change', enableDisableDeliverBtn);
+    form_name.addEventListener('keyup', enableDisableDeliverBtn);
+    form_phone.addEventListener('keyup', enableDisableDeliverBtn);
+    form_address.addEventListener('keyup', enableDisableDeliverBtn);
+
+    deliver_btn.addEventListener('click', function(e){
+        e.preventDefault();
+        var data = {
+            totalPrice: total_price.innerHTML
+        }
+        var setting = {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/plain; charset=utf-8"
+            },
+            body: JSON.stringify(data)
+        }
+        fetch('https://galvanize-eats-api.herokuapp.com/orders', setting)
+        .then(function(response){
+            var data = response.text();
+            return data;
+        })
+        .then(function(data){
+            var status = document.querySelector('.status');
+            status.innerHTML = data;
+            status.style.opacity = 1;
+            setTimeout(function(){
+                status.style.opacity = 0;
+            },2000);
+            return data;
+        })
+        .catch(function(error){
+            console.error(error);
+        })
+    })
+}
+
+
+/*! jQuery v3.3.1 | (c) JS Foundation and other contributors | jquery.org/license */
+!function(e,t){"use strict";"object"==typeof module&&"object"==typeof module.exports?module.exports=e.document?t(e,!0):function(e){if(!e.document)throw new Error("jQuery requires a window with a document");return t(e)}:t(e)}("undefined"!=typeof window?window:this,function(e,t){"use strict";var n=[],r=e.document,i=Object.getPrototypeOf,o=n.slice,a=n.concat,s=n.push,u=n.indexOf,l={},c=l.toString,f=l.hasOwnProperty,p=f.toString,d=p.call(Object),h={},g=function e(t){return"function"==typeof t&&"number"!=typeof t.nodeType},y=function e(t){return null!=t&&t===t.window},v={type:!0,src:!0,noModule:!0};function m(e,t,n){var i,o=(t=t||r).createElement("script");if(o.text=e,n)for(i in v)n[i]&&(o[i]=n[i]);t.head.appendChild(o).parentNode.removeChild(o)}function x(e){return null==e?e+"":"object"==typeof e||"function"==typeof e?l[c.call(e)]||"object":typeof e}var b="3.3.1",w=function(e,t){return new w.fn.init(e,t)},T=/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;w.fn=w.prototype={jquery:"3.3.1",constructor:w,length:0,toArray:function(){return o.call(this)},get:function(e){return null==e?o.call(this):e<0?this[e+this.length]:this[e]},pushStack:function(e){var t=w.merge(this.constructor(),e);return t.prevObject=this,t},each:function(e){return w.each(this,e)},map:function(e){return this.pushStack(w.map(this,function(t,n){return e.call(t,n,t)}))},slice:function(){return this.pushStack(o.apply(this,arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(e){var t=this.length,n=+e+(e<0?t:0);return this.pushStack(n>=0&&n<t?[this[n]]:[])},end:function(){return this.prevObject||this.constructor()},push:s,sort:n.sort,splice:n.splice},w.extend=w.fn.extend=function(){var e,t,n,r,i,o,a=arguments[0]||{},s=1,u=arguments.length,l=!1;for("boolean"==typeof a&&(l=a,a=arguments[s]||{},s++),"object"==typeof a||g(a)||(a={}),s===u&&(a=this,s--);s<u;s++)if(null!=(e=arguments[s]))for(t in e)n=a[t],a!==(r=e[t])&&(l&&r&&(w.isPlainObject(r)||(i=Array.isArray(r)))?(i?(i=!1,o=n&&Array.isArray(n)?n:[]):o=n&&w.isPlainObject(n)?n:{},a[t]=w.extend(l,o,r)):void 0!==r&&(a[t]=r));return a},w.extend({expando:"jQuery"+("3.3.1"+Math.random()).replace(/\D/g,""),isReady:
